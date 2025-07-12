@@ -18,4 +18,19 @@ class AppViewController<VM: AppViewModel>: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.addSubviews()
+        self.setupConstraints()
+        self.binding()
+    }
+
+    // MARK: - Methods for override
+
+    func addSubviews() {}
+
+    func setupConstraints() {}
+
+    func binding() {}
 }
