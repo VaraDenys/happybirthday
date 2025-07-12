@@ -6,8 +6,15 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		08FE1F1286206755535C2A65 /* Pods_happybirthday.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AAB06DBEA799CE7322EE753 /* Pods_happybirthday.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		39B3B13A2E2293FB003F3FF1 /* happybirthday.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = happybirthday.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4A802682309935E61A5824A5 /* Pods-happybirthday.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-happybirthday.debug.xcconfig"; path = "Target Support Files/Pods-happybirthday/Pods-happybirthday.debug.xcconfig"; sourceTree = "<group>"; };
+		7AAB06DBEA799CE7322EE753 /* Pods_happybirthday.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_happybirthday.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		902359A42175C96685034989 /* Pods-happybirthday.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-happybirthday.release.xcconfig"; path = "Target Support Files/Pods-happybirthday/Pods-happybirthday.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,17 +43,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08FE1F1286206755535C2A65 /* Pods_happybirthday.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		10809427BEFB20AEE8674172 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7AAB06DBEA799CE7322EE753 /* Pods_happybirthday.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		39B3B1312E2293FB003F3FF1 = {
 			isa = PBXGroup;
 			children = (
 				39B3B13C2E2293FB003F3FF1 /* happybirthday */,
 				39B3B13B2E2293FB003F3FF1 /* Products */,
+				43965AD4AC366A85318C71B1 /* Pods */,
+				10809427BEFB20AEE8674172 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -58,6 +76,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		43965AD4AC366A85318C71B1 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4A802682309935E61A5824A5 /* Pods-happybirthday.debug.xcconfig */,
+				902359A42175C96685034989 /* Pods-happybirthday.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -65,9 +92,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 39B3B14D2E2293FC003F3FF1 /* Build configuration list for PBXNativeTarget "happybirthday" */;
 			buildPhases = (
+				F8A29603D67DCF5FDB12E267 /* [CP] Check Pods Manifest.lock */,
 				39B3B1362E2293FB003F3FF1 /* Sources */,
 				39B3B1372E2293FB003F3FF1 /* Frameworks */,
 				39B3B1382E2293FB003F3FF1 /* Resources */,
+				E486C731AD1384EE4A57EB83 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -77,8 +106,6 @@
 				39B3B13C2E2293FB003F3FF1 /* happybirthday */,
 			);
 			name = happybirthday;
-			packageProductDependencies = (
-			);
 			productName = happybirthday;
 			productReference = 39B3B13A2E2293FB003F3FF1 /* happybirthday.app */;
 			productType = "com.apple.product-type.application";
@@ -127,6 +154,48 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		E486C731AD1384EE4A57EB83 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-happybirthday/Pods-happybirthday-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-happybirthday/Pods-happybirthday-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-happybirthday/Pods-happybirthday-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F8A29603D67DCF5FDB12E267 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-happybirthday-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		39B3B1362E2293FB003F3FF1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -140,12 +209,14 @@
 /* Begin XCBuildConfiguration section */
 		39B3B14E2E2293FC003F3FF1 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4A802682309935E61A5824A5 /* Pods-happybirthday.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Q22JYFQY92;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = happybirthday/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -167,12 +238,14 @@
 		};
 		39B3B14F2E2293FC003F3FF1 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 902359A42175C96685034989 /* Pods-happybirthday.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Q22JYFQY92;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = happybirthday/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
