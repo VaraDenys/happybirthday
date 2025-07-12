@@ -7,11 +7,9 @@
 
 import UIKit
 
-class MainViewController: UIViewController {
-
+class MainViewController: AppViewController<MainViewModel> {
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .red
     }
 }
 
