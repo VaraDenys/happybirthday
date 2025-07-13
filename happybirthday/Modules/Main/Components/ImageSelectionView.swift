@@ -11,6 +11,7 @@ import SnapKit
 class ImageSelectionView: UIView {
     private struct Constants {
         static let labelInsets: UIEdgeInsets = .init(top: 8, left: 16, bottom: 8, right: 16)
+        static let labelHeight: CGFloat = 37
         static let buttonInsets: NSDirectionalEdgeInsets = .init(top: 8, leading: 16, bottom: 8, trailing: 16)
         static let removeButtonOffset: CGFloat = 8
     }
@@ -57,15 +58,17 @@ class ImageSelectionView: UIView {
         self.selectImageButton.snp.remakeConstraints {
             $0.edges.equalToSuperview()
         }
-        self.removeImageButton.snp.remakeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.height.width.equalTo(self.fileChosenLabel.snp.height)
-            $0.trailing.lessThanOrEqualToSuperview()
-        }
         self.fileChosenLabel.snp.remakeConstraints {
             $0.leading.top.equalToSuperview()
             $0.bottom.lessThanOrEqualToSuperview()
+            $0.height.equalTo(Constants.labelHeight)
             $0.trailing.lessThanOrEqualTo(self.removeImageButton.snp.leading).offset(-Constants.removeButtonOffset)
+        }
+        self.removeImageButton.snp.remakeConstraints {
+            $0.leading.equalTo(self.fileChosenLabel.snp.trailing).offset(Constants.removeButtonOffset)
+            $0.trailing.lessThanOrEqualToSuperview()
+            $0.centerY.equalTo(self.fileChosenLabel.snp.centerY)
+            $0.width.height.equalTo(Constants.labelHeight)
         }
     }
 
@@ -86,6 +89,8 @@ class ImageSelectionView: UIView {
         self.fileChosenLabel.layer.borderWidth = 1
         self.fileChosenLabel.layer.borderColor = UIColor.appMainViewSecond.cgColor
         self.fileChosenLabel.textColor = .appText
+        self.fileChosenLabel.setContentHuggingPriority(.required, for: .horizontal)
+        self.fileChosenLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
 
     private func setupRemoveImageButton() {
