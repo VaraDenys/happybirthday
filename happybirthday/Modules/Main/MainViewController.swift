@@ -33,6 +33,7 @@ class MainViewController: AppViewController<MainViewModel> {
         self.view.backgroundColor = .appMainViewBackground
 
         self.setupAppNameLabel()
+        self.setupNameTextField()
         self.setupStackView()
         self.setupButton()
         self.setupErrorLabel()
@@ -71,12 +72,17 @@ class MainViewController: AppViewController<MainViewModel> {
 
     override func binding() {
         self.viewModel.onDidChangeValues = { [weak self] state in
+            self?.nameTextField.text = state.childName
             self?.imageSelectionView.update(with: state.imageName, imageSelected: state.imageSelected)
         }
 
         self.viewModel.onDidError = { [weak self] error in
-            self?.errorLabel.text = error.rawValue
-            self?.errorLabel.isHidden = false
+            guard let self else { return }
+            self.showError(error)
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+                self?.clearError(error)
+            }
         }
 
         self.imageSelectionView.onDidSelectImageButtonTapped = { [weak self] in
@@ -98,18 +104,28 @@ class MainViewController: AppViewController<MainViewModel> {
         self.appNameLabel.font = .systemFont(ofSize: Constants.appNameFontSize)
         self.appNameLabel.textAlignment = .center
         self.appNameLabel.text = self.viewModel.getAppName()
-        self.nameTextField.returnKeyType = .done
-        self.nameTextField.delegate = self
-        self.nameTextField.autocorrectionType = .no
-        self.nameTextField.keyboardType = .default
     }
 
     private func setupStackView() {
         self.stackView.axis = .vertical
         self.stackView.spacing = Constants.stackViewSpacing
 
-        self.nameTextField.setAppStyle(with: "Enter the name")
+        self.setupNameTextField()
         self.setupDatePicker()
+    }
+
+    private func setupNameTextField() {
+        self.nameTextField.returnKeyType = .done
+        self.nameTextField.delegate = self
+        self.nameTextField.autocorrectionType = .no
+        self.nameTextField.keyboardType = .default
+        self.nameTextField.setAppStyle(with: "Enter the name")
+        self.nameTextField.overrideUserInterfaceStyle = .light
+    }
+
+    private func updateNameTextFieldBorder(errorState: Bool) {
+        let color: UIColor = errorState ? .red : .appMainViewSecond
+        self.nameTextField.layer.borderColor = color.cgColor
     }
 
     private func setupDatePicker() {
@@ -118,7 +134,7 @@ class MainViewController: AppViewController<MainViewModel> {
         self.datePicker.maximumDate = Date()
         self.datePicker.minimumDate = viewModel.getMinimumDate()
         self.datePicker.datePickerMode = .date
-
+        self.datePicker.overrideUserInterfaceStyle = .light
     }
 
     private func setupButton() {
@@ -128,7 +144,7 @@ class MainViewController: AppViewController<MainViewModel> {
         configuration.background.strokeColor = .appMainViewSecond
         configuration.background.strokeWidth = 1
         self.forwardButton.configuration = configuration
-        self.forwardButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        self.forwardButton.addTarget(self, action: #selector(forwardButtonTapped), for: .touchUpInside)
     }
 
     private func setupErrorLabel() {
@@ -138,11 +154,36 @@ class MainViewController: AppViewController<MainViewModel> {
         self.errorLabel.isHidden = true
     }
 
-    @objc private func buttonTapped() {}
+    private func showError(_ error: AppErrorType) {
+        self.errorLabel.text = error.rawValue
+        self.errorLabel.isHidden = false
+
+        if error == .emptyNameField {
+            updateNameTextFieldBorder(errorState: true)
+        }
+    }
+
+    private func clearError(_ error: AppErrorType) {
+        self.errorLabel.text = nil
+        self.errorLabel.isHidden = true
+
+        if error == .emptyNameField {
+            updateNameTextFieldBorder(errorState: false)
+        }
+    }
+
+    @objc private func forwardButtonTapped() {
+        self.viewModel.forwardButtonTapped()
+    }
 }
 
 extension MainViewController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        self.clearError(.emptyNameField)
+    }
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.viewModel.nameWasEntered(textField.text)
         textField.resignFirstResponder()
         return true
     }

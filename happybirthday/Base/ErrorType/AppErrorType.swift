@@ -9,4 +9,5 @@ import Foundation
 
 enum AppErrorType: String, Error {
     case imageLoadingError = "An error occurred while loading the image"
+    case emptyNameField = "The \"Name\" field is empty, please enter a name"
 }

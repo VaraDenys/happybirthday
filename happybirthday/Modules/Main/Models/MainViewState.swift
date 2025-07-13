@@ -6,6 +6,13 @@
 //
 
 struct MainViewState {
+    var childName: String?
     var imageName: String?
     var imageSelected: Bool
+
+    init() {
+        self.childName = ""
+        self.imageName = nil
+        self.imageSelected = false
+    }
 }

@@ -9,20 +9,43 @@ import Foundation
 import UIKit
 
 class MainViewModel: AppViewModel {
-    private var state = MainViewState(imageName: nil, imageSelected: false)
-    private var selectedImage: UIImage?
+    private var state = MainViewState()
+    private var childInfo = ChildInfo()
     var onDidChangeValues: ((MainViewState) -> Void)?
     var onDidError: ((AppErrorType) -> Void)?
 
+    // MARK: - public methods
+
+    func forwardButtonTapped() {
+        let validationResult = self.validateData()
+        switch validationResult {
+        case .success(let success):
+            if success {
+                self.forwardToNextPage()
+            }
+        case .failure(let error):
+            self.onDidError?(error)
+        }
+    }
+
+    func nameWasEntered(_ name: String?) {
+        let clearedName = name?.cleanedSpaces()
+        self.childInfo.name = clearedName ?? ""
+        self.state.childName = clearedName
+        if clearedName != name {
+            self.onDidChangeValues?(state)
+        }
+    }
+
     func onDidRemoveImageButtonTapped() {
-        self.selectedImage = nil
+        self.childInfo.image = nil
         self.state.imageName = nil
         self.state.imageSelected = false
         self.onDidChangeValues?(self.state)
     }
 
     func handlePickedImage(_ image: UIImage, name: String?) {
-        self.selectedImage = image
+        self.childInfo.image = image
         self.state.imageName = name
         self.state.imageSelected = true
         self.onDidChangeValues?(self.state)
@@ -38,5 +61,18 @@ class MainViewModel: AppViewModel {
 
     func getMinimumDate() -> Date? {
         Date.yearsAgo(12)
+    }
+
+    // MARK: - private methods
+
+    private func forwardToNextPage() {
+        debugPrint("Will forward to next page")
+    }
+
+    private func validateData() -> Result<Bool, AppErrorType> {
+        guard !self.childInfo.name.filter({ $0 != " " }).isEmpty else {
+            return .failure(.emptyNameField)
+        }
+        return .success(true)
     }
 }
