@@ -22,7 +22,6 @@ class MainViewController: AppViewController<MainViewModel> {
     private let appNameLabel = UILabel()
     private let stackView = UIStackView()
     private let nameTextField = AppPaddedTextField()
-    private let dateTextField = AppPaddedTextField()
     private let datePicker = UIDatePicker()
     private let imageSelectionView = ImageSelectionView()
     private let errorLabel = UILabel()
@@ -47,7 +46,7 @@ class MainViewController: AppViewController<MainViewModel> {
         self.view.addSubview(self.forwardButton)
         self.view.addSubview(self.errorLabel)
         self.stackView.addArrangedSubview(self.nameTextField)
-        self.stackView.addArrangedSubview(self.dateTextField)
+        self.stackView.addArrangedSubview(self.datePicker)
         self.stackView.addArrangedSubview(self.imageSelectionView)
     }
 
@@ -110,15 +109,16 @@ class MainViewController: AppViewController<MainViewModel> {
         self.stackView.spacing = Constants.stackViewSpacing
 
         self.nameTextField.setAppStyle(with: "Enter the name")
-        self.setupDatePickerField()
+        self.setupDatePicker()
     }
 
-    private func setupDatePickerField() {
-        self.dateTextField.setAppStyle(with: "Enter date (dd/MM/yyyy)")
-        self.dateTextField.keyboardType = .numbersAndPunctuation
-        self.dateTextField.returnKeyType = .done
-        self.dateTextField.autocorrectionType = .no
-        self.dateTextField.delegate = self
+    private func setupDatePicker() {
+        self.datePicker.preferredDatePickerStyle = .wheels
+        self.datePicker.date = Date()
+        self.datePicker.maximumDate = Date()
+        self.datePicker.minimumDate = viewModel.getMinimumDate()
+        self.datePicker.datePickerMode = .date
+
     }
 
     private func setupButton() {
@@ -138,10 +138,6 @@ class MainViewController: AppViewController<MainViewModel> {
         self.errorLabel.isHidden = true
     }
 
-    @objc private func doneTapped() {
-        dateTextField.resignFirstResponder()
-    }
-
     @objc private func buttonTapped() {}
 }
 
@@ -149,23 +145,6 @@ extension MainViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
-    }
-
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        if textField == dateTextField {
-            guard let text = textField.text else { return }
-
-            let formatter = DateFormatter()
-            formatter.dateFormat = "dd/MM/yyyy"
-            formatter.locale = Locale(identifier: "en_US_POSIX")
-
-            if let _ = formatter.date(from: text) {
-                errorLabel.isHidden = true
-            } else {
-                errorLabel.text = "Invalid date format. Use dd/MM/yyyy"
-                errorLabel.isHidden = false
-            }
-        }
     }
 }
 
