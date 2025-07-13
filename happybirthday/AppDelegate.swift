@@ -10,22 +10,14 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    var window: UIWindow?
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        self.buildMainView()
         return true
     }
 
-    private func buildMainView() {
-        let mainVM = MainViewModel()
-        let mainVC = MainViewController(viewModel: mainVM)
-        let navigationController = UINavigationController(rootViewController: mainVC)
-        let frame = UIScreen.main.bounds
-        let window = UIWindow(frame: frame)
-        self.window = window
-        window.rootViewController = navigationController
-        window.makeKeyAndVisible()
+    // MARK: - UISceneSession Lifecycle
+
+    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
 }
 
