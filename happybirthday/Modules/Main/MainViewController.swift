@@ -16,6 +16,7 @@ class MainViewController: AppViewController<MainViewModel> {
         static let buttonInsets: NSDirectionalEdgeInsets = .init(top: 8, leading: 16, bottom: 8, trailing: 16)
         static let stackViewSpacing: CGFloat = 32
         static let buttonTitleSize: CGFloat = 18
+        static let errorLabelOffset: CGFloat = 18
     }
 
     private let appNameLabel = UILabel()
@@ -23,8 +24,10 @@ class MainViewController: AppViewController<MainViewModel> {
     private let nameTextField = AppPaddedTextField()
     private let dateTextField = AppPaddedTextField()
     private let datePicker = UIDatePicker()
-    private let selectImageButton = UIButton()
-    private let button = UIButton()
+    private let imageSelectionView = ImageSelectionView()
+    private let errorLabel = UILabel()
+    private let forwardButton = UIButton()
+    private var imagePickerCoordinator: ImagePickerCoordinator?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +36,7 @@ class MainViewController: AppViewController<MainViewModel> {
         self.setupAppNameLabel()
         self.setupStackView()
         self.setupButton()
+        self.setupErrorLabel()
     }
 
     // MARK: - overrided methods
@@ -40,10 +44,11 @@ class MainViewController: AppViewController<MainViewModel> {
     override func addSubviews() {
         self.view.addSubview(self.appNameLabel)
         self.view.addSubview(self.stackView)
-        self.view.addSubview(self.button)
+        self.view.addSubview(self.forwardButton)
+        self.view.addSubview(self.errorLabel)
         self.stackView.addArrangedSubview(self.nameTextField)
         self.stackView.addArrangedSubview(self.dateTextField)
-        self.stackView.addArrangedSubview(self.selectImageButton)
+        self.stackView.addArrangedSubview(self.imageSelectionView)
     }
 
     override func setupConstraints() {
@@ -55,9 +60,35 @@ class MainViewController: AppViewController<MainViewModel> {
             $0.leading.trailing.equalToSuperview().inset(Constants.horizontalnset)
             $0.center.equalToSuperview()
         }
-        self.button.snp.remakeConstraints {
+        self.forwardButton.snp.remakeConstraints {
             $0.centerX.equalToSuperview()
             $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-Constants.verticalOffset)
+        }
+        self.errorLabel.snp.remakeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(Constants.horizontalnset)
+            $0.bottom.equalTo(self.forwardButton.snp.top).offset(-Constants.errorLabelOffset)
+        }
+    }
+
+    override func binding() {
+        self.viewModel.onDidChangeValues = { [weak self] state in
+            self?.imageSelectionView.update(with: state.imageName, imageSelected: state.imageSelected)
+        }
+
+        self.viewModel.onDidError = { [weak self] error in
+            self?.errorLabel.text = error.rawValue
+            self?.errorLabel.isHidden = false
+        }
+
+        self.imageSelectionView.onDidSelectImageButtonTapped = { [weak self] in
+            guard let self else { return }
+            self.imagePickerCoordinator = ImagePickerCoordinator(presentingVC: self)
+            self.imagePickerCoordinator?.delegate = self
+            self.imagePickerCoordinator?.presentPicker()
+        }
+
+        self.imageSelectionView.onDidRemoveImageButtonTapped = { [weak self] in
+            self?.viewModel.onDidRemoveImageButtonTapped()
         }
     }
 
@@ -80,36 +111,14 @@ class MainViewController: AppViewController<MainViewModel> {
 
         self.nameTextField.setAppStyle(with: "Enter the name")
         self.setupDatePickerField()
-        self.setupSelectImageButton()
     }
 
     private func setupDatePickerField() {
-        self.dateTextField.inputView = datePicker
-        self.dateTextField.setAppStyle(with: "Select date")
-
-        self.datePicker.datePickerMode = .date
-        self.datePicker.preferredDatePickerStyle = .wheels
-        self.datePicker.date = Date()
-        self.datePicker.maximumDate = Date()
-        self.datePicker.minimumDate = self.viewModel.getMinimumDate()
-        self.datePicker.backgroundColor = .white
-
-        let toolbar = UIToolbar()
-        toolbar.sizeToFit()
-        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(doneTapped))
-        toolbar.setItems([flexibleSpace, doneButton], animated: false)
-        
-        self.dateTextField.inputAccessoryView = toolbar
-    }
-
-    private func setupSelectImageButton() {
-        var configuration = UIButton.Configuration.plain()
-        configuration.title = "Select image"
-        configuration.contentInsets = Constants.buttonInsets
-        configuration.background.strokeColor = .appMainViewSecond
-        configuration.background.strokeWidth = 1
-        self.selectImageButton.configuration = configuration
+        self.dateTextField.setAppStyle(with: "Enter date (dd/MM/yyyy)")
+        self.dateTextField.keyboardType = .numbersAndPunctuation
+        self.dateTextField.returnKeyType = .done
+        self.dateTextField.autocorrectionType = .no
+        self.dateTextField.delegate = self
     }
 
     private func setupButton() {
@@ -118,10 +127,16 @@ class MainViewController: AppViewController<MainViewModel> {
         configuration.title = "Go ahead!"
         configuration.background.strokeColor = .appMainViewSecond
         configuration.background.strokeWidth = 1
-        self.button.configuration = configuration
-        self.button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        self.forwardButton.configuration = configuration
+        self.forwardButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
-    
+
+    private func setupErrorLabel() {
+        self.errorLabel.textColor = .red
+        self.errorLabel.textAlignment = .center
+        self.errorLabel.numberOfLines = 0
+        self.errorLabel.isHidden = true
+    }
 
     @objc private func doneTapped() {
         dateTextField.resignFirstResponder()
@@ -134,5 +149,41 @@ extension MainViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if textField == dateTextField {
+            guard let text = textField.text else { return }
+
+            let formatter = DateFormatter()
+            formatter.dateFormat = "dd/MM/yyyy"
+            formatter.locale = Locale(identifier: "en_US_POSIX")
+
+            if let _ = formatter.date(from: text) {
+                errorLabel.isHidden = true
+            } else {
+                errorLabel.text = "Invalid date format. Use dd/MM/yyyy"
+                errorLabel.isHidden = false
+            }
+        }
+    }
+}
+
+extension MainViewController: ImagePickerCoordinatorDelegate {
+    func imagePickerCoordinator(_ coordinator: ImagePickerCoordinator,
+                                didPick result: (image: UIImage, name: String?)?,
+                                error: AppErrorType?) {
+        guard error == nil else {
+            viewModel.onDidErrorOccured(error!)
+            return
+        }
+        guard let result else {
+            return
+        }
+        viewModel.handlePickedImage(result.image, name: result.name)
+    }
+
+    func imagePickerDidCancel() {
+        self.imagePickerCoordinator = nil
     }
 }
