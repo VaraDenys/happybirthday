@@ -18,12 +18,14 @@ class BirthdayViewController: AppViewController<BirthdayViewModel> {
         static let logoOffset: CGFloat = 15
         static let backButtonOffset: CGFloat = 10
         static let backButtonSize: CGFloat = 32
+        static let shareViewBottomOffset: CGFloat = 45
     }
     private let headerView = BirthdayHeaderView()
     private let backButton = UIButton()
     private let showImageView = ShowImageView()
     private let logoImageView = UIImageView(image: UIImage(named: "nanit_logo"))
     private let frontImageView = UIImageView()
+    private let shareScreenshotButton = ShareScreenshotButton()
 
     private var frontImageHeightConstraint: Constraint?
     private var hasUpdatedFrontImageHeight = false
@@ -51,6 +53,7 @@ class BirthdayViewController: AppViewController<BirthdayViewModel> {
         self.view.addSubview(self.showImageView)
         self.view.addSubview(self.logoImageView)
         self.view.addSubview(self.frontImageView)
+        self.view.addSubview(self.shareScreenshotButton)
     }
 
     override func setupConstraints() {
@@ -81,6 +84,10 @@ class BirthdayViewController: AppViewController<BirthdayViewModel> {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
             self.frontImageHeightConstraint = $0.height.equalTo(Constants.initialFrontImageHeight).constraint
+        }
+        self.shareScreenshotButton.snp.remakeConstraints {
+            $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(Constants.shareViewBottomOffset)
+            $0.centerX.equalToSuperview()
         }
     }
 
