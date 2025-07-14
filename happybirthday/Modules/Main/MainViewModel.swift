@@ -11,6 +11,7 @@ import UIKit
 class MainViewModel: AppViewModel {
     private var state = MainViewState()
     private var childInfo = ChildInfo()
+    var navigateToNextController: ((ChildInfo) -> Void)?
     var onDidChangeValues: ((MainViewState) -> Void)?
     var onDidError: ((AppErrorType) -> Void)?
 
@@ -21,7 +22,7 @@ class MainViewModel: AppViewModel {
         switch validationResult {
         case .success(let success):
             if success {
-                self.forwardToNextPage()
+                self.navigateToNextController?(self.childInfo)
             }
         case .failure(let error):
             self.onDidError?(error)
@@ -67,10 +68,6 @@ class MainViewModel: AppViewModel {
     }
 
     // MARK: - private methods
-
-    private func forwardToNextPage() {
-        debugPrint("Will forward to next page")
-    }
 
     private func validateData() -> Result<Bool, AppErrorType> {
         guard !self.childInfo.name.filter({ $0 != " " }).isEmpty else {

@@ -21,6 +21,7 @@ class AppViewController<VM: AppViewModel>: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.isNavigationBarHidden = true
         self.addSubviews()
         self.setupConstraints()
         self.binding()

@@ -86,6 +86,11 @@ class MainViewController: AppViewController<MainViewModel> {
             }
         }
 
+        self.viewModel.navigateToNextController = { [weak self] info in
+            let birthdayVC = Screens.birthday(info)
+            self?.navigationController?.pushViewController(birthdayVC, animated: true)
+        }
+
         self.imageSelectionView.onDidSelectImageButtonTapped = { [weak self] in
             guard let self else { return }
             self.imagePickerCoordinator = ImagePickerCoordinator(presentingVC: self)

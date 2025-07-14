@@ -10,4 +10,9 @@ struct Screens {
         let viewModel = MainViewModel()
         return MainViewController(viewModel: viewModel)
     }
+
+    static func birthday(_ info: ChildInfo) -> BirthdayViewController {
+        let viewModel = BirthdayViewModel(info)
+        return BirthdayViewController(viewModel: viewModel)
+    }
 }
