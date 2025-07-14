@@ -153,7 +153,7 @@ extension BirthdayViewController: ImagePickerCoordinatorDelegate {
         guard let result else {
             return
         }
-        self.viewModel.handlePickedImage(result.image)
+        self.viewModel.handlePickedImage(result.image, name: result.name)
         self.imagePickerCoordinator = nil
     }
 

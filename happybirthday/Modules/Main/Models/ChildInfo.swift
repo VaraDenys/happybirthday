@@ -9,13 +9,7 @@ import  Foundation
 import UIKit
 
 struct ChildInfo {
-    var name: String
-    var date: Date
-    var image: UIImage?
-
-    init() {
-        self.name = ""
-        self.date = Date()
-        self.image = nil
-    }
+    let name: String
+    let date: Date
+    let image: UIImage?
 }

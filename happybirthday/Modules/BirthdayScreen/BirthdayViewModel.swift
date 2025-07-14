@@ -24,8 +24,9 @@ class BirthdayViewModel: AppViewModel {
         self.onDidChangeValues?(data)
     }
 
-    func handlePickedImage(_ image: UIImage) {
+    func handlePickedImage(_ image: UIImage, name: String?) {
         self.data.childImage = image
+        ImageStore.shared.save(image: image, named: name)
         self.onDidChangeValues?(self.data)
     }
 }

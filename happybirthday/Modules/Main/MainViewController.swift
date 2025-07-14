@@ -39,6 +39,11 @@ class MainViewController: AppViewController<MainViewModel> {
         self.setupErrorLabel()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.viewModel.fetchData()
+    }
+
     // MARK: - overrided methods
 
     override func addSubviews() {
@@ -74,7 +79,8 @@ class MainViewController: AppViewController<MainViewModel> {
         self.viewModel.onDidChangeValues = { [weak self] state in
             self?.nameTextField.text = state.childName
             self?.updateButtonState(activated: state.forwardButtonActivated)
-            self?.imageSelectionView.update(with: state.imageName, imageSelected: state.imageSelected)
+            self?.imageSelectionView.update(with: state.imageName, imageSelected: state.image != nil)
+            self?.datePicker.date = state.date
         }
 
         self.viewModel.onDidError = { [weak self] error in
