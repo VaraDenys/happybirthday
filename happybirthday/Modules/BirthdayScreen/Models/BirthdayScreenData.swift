@@ -8,7 +8,7 @@
 import UIKit
 
 struct BirthdayScreenData {
-    let childImage: UIImage?
+    var childImage: UIImage?
     let numberImageName: String
     let topTitle: String
     let bottomTitle: String

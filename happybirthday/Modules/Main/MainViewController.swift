@@ -221,6 +221,7 @@ extension MainViewController: ImagePickerCoordinatorDelegate {
             return
         }
         viewModel.handlePickedImage(result.image, name: result.name)
+        self.imagePickerCoordinator = nil
     }
 
     func imagePickerDidCancel() {

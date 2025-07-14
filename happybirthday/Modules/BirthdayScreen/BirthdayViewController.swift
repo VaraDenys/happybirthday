@@ -26,6 +26,7 @@ class BirthdayViewController: AppViewController<BirthdayViewModel> {
     private let logoImageView = UIImageView(image: UIImage(named: "nanit_logo"))
     private let frontImageView = UIImageView()
     private let shareScreenshotButton = ShareScreenshotButton()
+    private var imagePickerCoordinator: ImagePickerCoordinator?
 
     private var frontImageHeightConstraint: Constraint?
     private var hasUpdatedFrontImageHeight = false
@@ -102,6 +103,13 @@ class BirthdayViewController: AppViewController<BirthdayViewModel> {
             self?.frontImageView.image = UIImage(named: data.type.getFrontImageName())
             self?.updateFrontImageHeight()
         }
+
+        self.showImageView.onDidCameraButtonTapped = { [weak self] in
+            guard let self else { return }
+            self.imagePickerCoordinator = ImagePickerCoordinator(presentingVC: self)
+            self.imagePickerCoordinator?.delegate = self
+            self.imagePickerCoordinator?.presentPicker()
+        }
     }
 
     // MARK: - private methods
@@ -124,5 +132,24 @@ class BirthdayViewController: AppViewController<BirthdayViewModel> {
 
     @objc private func backButtonTapped() {
         self.navigationController?.popViewController(animated: true)
+    }
+}
+
+extension BirthdayViewController: ImagePickerCoordinatorDelegate {
+    func imagePickerCoordinator(_ coordinator: ImagePickerCoordinator,
+                                didPick result: (image: UIImage, name: String?)?,
+                                error: AppErrorType?) {
+        guard error == nil else {
+            return
+        }
+        guard let result else {
+            return
+        }
+        self.viewModel.handlePickedImage(result.image)
+        self.imagePickerCoordinator = nil
+    }
+
+    func imagePickerDidCancel() {
+        self.imagePickerCoordinator = nil
     }
 }

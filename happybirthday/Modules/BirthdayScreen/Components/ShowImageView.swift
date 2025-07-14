@@ -10,14 +10,15 @@ import SnapKit
 
 class ShowImageView: UIView {
     private struct Constants {
-        static let cameraIconSize: CGFloat = 36
+        static let cameraIconSize: CGFloat = 42
         static let circleViewBorderWidth: CGFloat = 7
         static let fallbackImageScale: CGFloat = 0.54
     }
 
     private let circleView = CircleView()
     private let imageView = UIImageView()
-    private let cameraIconView = UIImageView()
+    private let cameraButton = UIButton()
+    var onDidCameraButtonTapped: (() -> Void)?
 
     private var cameraCenterXConstraint: Constraint?
     private var cameraCenterYConstraint: Constraint?
@@ -51,7 +52,7 @@ class ShowImageView: UIView {
 
     func configure(with image: UIImage?, type: BirthdayScreenType) {
         self.setupImage(image, fallbackImageName: type.getFallbackFaceImageName())
-        self.cameraIconView.image = UIImage(named: type.getCameraIconName())
+        self.cameraButton.setImage(UIImage(named: type.getCameraIconName()), for: .normal)
         self.setupColors(with: type)
     }
     
@@ -59,7 +60,7 @@ class ShowImageView: UIView {
     
     private func addSubviews() {
         self.addSubview(self.circleView)
-        self.addSubview(self.cameraIconView)
+        self.addSubview(self.cameraButton)
     }
     
     private func setupInitialConstraints() {
@@ -67,7 +68,7 @@ class ShowImageView: UIView {
             $0.edges.equalToSuperview()
         }
 
-        self.cameraIconView.snp.makeConstraints { make in
+        self.cameraButton.snp.makeConstraints { make in
             make.width.height.equalTo(Constants.cameraIconSize)
             self.cameraCenterXConstraint = make.centerX.equalTo(circleView.snp.centerX).constraint
             self.cameraCenterYConstraint = make.centerY.equalTo(circleView.snp.centerY).constraint
@@ -77,8 +78,8 @@ class ShowImageView: UIView {
     private func setupViews() {
         self.circleView.layer.borderWidth = Constants.circleViewBorderWidth
         self.circleView.clipsToBounds = true
-        self.cameraIconView.contentMode = .scaleAspectFit
         self.imageView.contentMode = .scaleAspectFill
+        self.cameraButton.addTarget(self, action: #selector(cameraButtonTapped), for: .touchUpInside)
     }
 
     private func setupImage(_ image: UIImage?, fallbackImageName: String) {
@@ -101,5 +102,9 @@ class ShowImageView: UIView {
     private func setupColors(with type: BirthdayScreenType) {
         self.circleView.backgroundColor = UIColor(named: type.getCircleBackgroundColorName())
         self.circleView.layer.borderColor = UIColor(named: type.getBorderColorName())?.cgColor
+    }
+
+    @objc private func cameraButtonTapped() {
+        self.onDidCameraButtonTapped?()
     }
 }

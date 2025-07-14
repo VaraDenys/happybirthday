@@ -5,10 +5,11 @@
 //  Created by mac on 13.07.2025.
 //
 
+import UIKit
+
 class BirthdayViewModel: AppViewModel {
     private var data: BirthdayScreenData
     var onDidChangeValues: ((BirthdayScreenData) -> Void)?
-    var onDidError: ((AppErrorType) -> Void)?
 
     init(_ info: ChildInfo) {
         let timeSince = info.date.timeSinceNowInShifts()
@@ -21,5 +22,10 @@ class BirthdayViewModel: AppViewModel {
 
     func fetchData() {
         self.onDidChangeValues?(data)
+    }
+
+    func handlePickedImage(_ image: UIImage) {
+        self.data.childImage = image
+        self.onDidChangeValues?(self.data)
     }
 }
