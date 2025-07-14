@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class ShowImageView: UIView {
+class ShowImageView: UIView, ViewWithHiddenElements {
     private struct Constants {
         static let cameraIconSize: CGFloat = 42
         static let circleViewBorderWidth: CGFloat = 7
@@ -19,6 +19,9 @@ class ShowImageView: UIView {
     private let imageView = UIImageView()
     private let cameraButton = UIButton()
     var onDidCameraButtonTapped: (() -> Void)?
+    var hiddenElements: [UIView] {
+        [self.cameraButton]
+    }
 
     private var cameraCenterXConstraint: Constraint?
     private var cameraCenterYConstraint: Constraint?

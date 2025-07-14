@@ -117,6 +117,7 @@ class BirthdayViewController: AppViewController<BirthdayViewModel> {
     private func setupViews() {
         self.backButton.setImage(UIImage(named: "back_button"), for: .normal)
         self.backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        self.shareScreenshotButton.addTarget(self, action: #selector(screenshotButtonTapped), for: .touchUpInside)
 
         self.logoImageView.contentMode = .scaleAspectFit
     }
@@ -132,6 +133,13 @@ class BirthdayViewController: AppViewController<BirthdayViewModel> {
 
     @objc private func backButtonTapped() {
         self.navigationController?.popViewController(animated: true)
+    }
+
+    @objc private func screenshotButtonTapped() {
+        var hiddenElements: [UIView] = [self.backButton, self.shareScreenshotButton]
+        let viewsWithHiddenElements = self.view.subviews.compactMap({ $0 as? ViewWithHiddenElements })
+        viewsWithHiddenElements.forEach { hiddenElements.append(contentsOf: $0.hiddenElements) }
+        self.shareScreenshot(hiding: hiddenElements)
     }
 }
 
