@@ -32,9 +32,8 @@ class MainViewModel: AppViewModel {
         let clearedName = name?.cleanedSpaces()
         self.childInfo.name = clearedName ?? ""
         self.state.childName = clearedName
-        if clearedName != name {
-            self.onDidChangeValues?(state)
-        }
+        self.state.forwardButtonActivated = !(name?.isEmpty ?? true)
+        self.onDidChangeValues?(state)
     }
 
     func onDidRemoveImageButtonTapped() {
@@ -61,6 +60,10 @@ class MainViewModel: AppViewModel {
 
     func getMinimumDate() -> Date? {
         Date.yearsAgo(12)
+    }
+
+    func dateWasChanges(_ date: Date) {
+        self.childInfo.date = date
     }
 
     // MARK: - private methods

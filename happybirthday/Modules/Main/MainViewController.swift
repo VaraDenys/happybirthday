@@ -73,6 +73,7 @@ class MainViewController: AppViewController<MainViewModel> {
     override func binding() {
         self.viewModel.onDidChangeValues = { [weak self] state in
             self?.nameTextField.text = state.childName
+            self?.updateButtonState(activated: state.forwardButtonActivated)
             self?.imageSelectionView.update(with: state.imageName, imageSelected: state.imageSelected)
         }
 
@@ -135,6 +136,7 @@ class MainViewController: AppViewController<MainViewModel> {
         self.datePicker.minimumDate = viewModel.getMinimumDate()
         self.datePicker.datePickerMode = .date
         self.datePicker.overrideUserInterfaceStyle = .light
+        self.datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
     }
 
     private func setupButton() {
@@ -144,7 +146,16 @@ class MainViewController: AppViewController<MainViewModel> {
         configuration.background.strokeColor = .appMainViewSecond
         configuration.background.strokeWidth = 1
         self.forwardButton.configuration = configuration
+        self.updateButtonState(activated: false)
         self.forwardButton.addTarget(self, action: #selector(forwardButtonTapped), for: .touchUpInside)
+    }
+
+    private func updateButtonState(activated: Bool) {
+        var configuration = self.forwardButton.configuration
+        let color: UIColor = activated ? .systemBlue : .systemGray
+        configuration?.background.strokeColor = color
+        configuration?.baseForegroundColor = color
+        self.forwardButton.configuration = configuration
     }
 
     private func setupErrorLabel() {
@@ -170,6 +181,10 @@ class MainViewController: AppViewController<MainViewModel> {
         if error == .emptyNameField {
             updateNameTextFieldBorder(errorState: false)
         }
+    }
+
+    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+        self.viewModel.dateWasChanges(sender.date)
     }
 
     @objc private func forwardButtonTapped() {
